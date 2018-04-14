@@ -18,6 +18,13 @@ html, body {
     }
 }
 
+@media (max-width: 768px) {
+    .nav-bar {
+        float: left;
+        margin-right: 10px;
+    }
+}
+
 header {
     grid-column: span 4;
     padding: 30px;
@@ -44,4 +51,24 @@ footer {
     font-size: 1.4em;
     background-color: #690;
     color: white;
+}
+
+.nav-bar {
+    cursor: pointer;
+
+    width: 150px;
+    height: 25px;
+    border-radius: 5px;
+    line-height: 24px;
+    font-size: 18px;
+    color: #fff;
+    background-color: black;
+
+    margin-bottom: 5px;
+    padding-left: 10px;
+}
+
+.nav-bar:hover {
+    color: #000;
+    background-color: white;
 }
