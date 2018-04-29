@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using IT_F18.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace IT_F18
 {
@@ -22,6 +24,8 @@ namespace IT_F18
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc();
+
+            services.AddDbContext<DatabaseContext>(options => options.UseSqlite("Data Source=Database.db"));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
