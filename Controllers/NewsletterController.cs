@@ -19,9 +19,10 @@ namespace IT_F18.Controllers
         }
 
         // GET: Newsletter
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
-            return View(await _context.Newsletter.ToListAsync());
+            
+            return View();
         }
 
         // GET: Newsletter/Details/5

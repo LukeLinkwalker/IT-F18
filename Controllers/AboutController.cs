@@ -20,9 +20,12 @@ namespace IT_F18.Controllers
         }
 
         // GET: About
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
-            return View(await _context.About.ToListAsync());
+            var text = _context.About.ToList();
+            ViewData["Message"] = text.Last().Plaintext;
+            return View();
+
         }
 
         // GET: About/Details/5
