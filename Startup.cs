@@ -37,7 +37,7 @@ namespace IT_F18
             }
             else
             {
-                app.UseExceptionHandler("/Home/Error");
+                app.UseExceptionHandler("/About/Error");
             }
 
             app.UseStaticFiles();
@@ -46,7 +46,7 @@ namespace IT_F18
             {
                 routes.MapRoute(
                     name: "default",
-                    template: "{controller=Home}/{action=About}/{id?}");
+                    template: "{controller=About}/{action=Index}");
             });
         }
     }

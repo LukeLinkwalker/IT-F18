@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using IT_F18.Models;
+using System.Diagnostics;
 
 namespace IT_F18.Controllers
 {
@@ -147,6 +148,11 @@ namespace IT_F18.Controllers
         private bool AboutViewModelExists(int id)
         {
             return _context.About.Any(e => e.ID == id);
+        }
+
+        public IActionResult Error()
+        {
+            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
     }
 }
