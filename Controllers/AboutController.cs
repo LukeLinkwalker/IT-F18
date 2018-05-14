@@ -23,7 +23,7 @@ namespace IT_F18.Controllers
         public IActionResult Index()
         {
             var text = _context.About.ToList();
-            ViewData["Message"] = text.Last().Plaintext;
+            ViewData["AboutMeText"] = text.Last().Plaintext;
             return View();
 
         }

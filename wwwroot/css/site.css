@@ -37,6 +37,7 @@ header {
 main {
     flex: 1;
     padding: 20px;
+    background-color: rgb(89, 135, 180);
 }
 
 nav {
@@ -71,4 +72,8 @@ footer {
 .nav-bar:hover {
     color: #000;
     background-color: white;
+}
+
+.title {
+    text-align: center;
 }
