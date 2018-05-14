@@ -6,40 +6,38 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using IT_F18.Models;
+using Microsoft.AspNetCore.Http;
+using System.IO;
+using Microsoft.AspNetCore.Hosting;
 
 namespace IT_F18.Controllers
 {
     public class GalleryController : Controller
     {
-        private readonly DatabaseContext _context;
+        private readonly IHostingEnvironment environment;
+        private readonly DatabaseContext context;
+        private readonly string UploadPath;
+        private readonly string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+        private Random random;
 
-        public GalleryController(DatabaseContext context)
+        public GalleryController(IHostingEnvironment environment, DatabaseContext context)
         {
-            _context = context;
+            this.environment = environment;
+            this.context = context;
+            this.UploadPath = Path.Combine(environment.WebRootPath, "images", "uploads");
+            this.random = new Random();
         }
 
         // GET: Gallery
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Gallery.ToListAsync());
+            return View(await context.Gallery.ToListAsync());
         }
 
         // GET: Gallery/Details/5
-        public async Task<IActionResult> Details(int? id)
+        public async Task<IActionResult> List()
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var galleryViewModel = await _context.Gallery
-                .SingleOrDefaultAsync(m => m.ID == id);
-            if (galleryViewModel == null)
-            {
-                return NotFound();
-            }
-
-            return View(galleryViewModel);
+            return View(await context.Gallery.ToListAsync());
         }
 
         // GET: Gallery/Create
@@ -48,71 +46,28 @@ namespace IT_F18.Controllers
             return View();
         }
 
-        // POST: Gallery/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ID,Image")] GalleryViewModel galleryViewModel)
+        public async Task<IActionResult> Create(List<IFormFile> Files)
         {
-            if (ModelState.IsValid)
+            long Size = Files.Sum(f => f.Length);
+            
+            foreach (var formFile in Files)
             {
-                _context.Add(galleryViewModel);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
-            return View(galleryViewModel);
-        }
-
-        // GET: Gallery/Edit/5
-        public async Task<IActionResult> Edit(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var galleryViewModel = await _context.Gallery.SingleOrDefaultAsync(m => m.ID == id);
-            if (galleryViewModel == null)
-            {
-                return NotFound();
-            }
-            return View(galleryViewModel);
-        }
-
-        // POST: Gallery/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ID,Image")] GalleryViewModel galleryViewModel)
-        {
-            if (id != galleryViewModel.ID)
-            {
-                return NotFound();
-            }
-
-            if (ModelState.IsValid)
-            {
-                try
+                if (formFile.Length > 0)
                 {
-                    _context.Update(galleryViewModel);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!GalleryViewModelExists(galleryViewModel.ID))
+                    string filePath = Path.Combine(UploadPath, string.Concat(GetRandomString(32), formFile.FileName.Substring(formFile.FileName.IndexOf('.'))));
+
+                    using (var stream = new FileStream(filePath, FileMode.Create))
                     {
-                        return NotFound();
+                        await formFile.CopyToAsync(stream);
                     }
-                    else
-                    {
-                        throw;
-                    }
+
+                    context.Add(new GalleryViewModel() { ImagePath = filePath.Replace(UploadPath, "").Substring(1) });
+                    await context.SaveChangesAsync();
                 }
-                return RedirectToAction(nameof(Index));
             }
-            return View(galleryViewModel);
+            
+            return RedirectToAction("Index");
         }
 
         // GET: Gallery/Delete/5
@@ -122,15 +77,15 @@ namespace IT_F18.Controllers
             {
                 return NotFound();
             }
-
-            var galleryViewModel = await _context.Gallery
-                .SingleOrDefaultAsync(m => m.ID == id);
+            
+            var galleryViewModel = await context.Gallery.SingleOrDefaultAsync(m => m.ID == id);
             if (galleryViewModel == null)
             {
                 return NotFound();
             }
-
+            
             return View(galleryViewModel);
+
         }
 
         // POST: Gallery/Delete/5
@@ -138,15 +93,25 @@ namespace IT_F18.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var galleryViewModel = await _context.Gallery.SingleOrDefaultAsync(m => m.ID == id);
-            _context.Gallery.Remove(galleryViewModel);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            var model = context.Gallery.SingleOrDefault(m => m.ID == id);
+            
+            string filePath = Path.Combine(UploadPath, model.ImagePath);
+            System.IO.File.Delete(filePath);
+
+            context.Gallery.Remove(model);
+            await context.SaveChangesAsync();
+
+            return RedirectToAction("List");
         }
 
         private bool GalleryViewModelExists(int id)
         {
-            return _context.Gallery.Any(e => e.ID == id);
+            return context.Gallery.Any(e => e.ID == id);
+        }
+
+        private string GetRandomString(int length)
+        {
+            return new string(Enumerable.Repeat(chars, length).Select(s => s[random.Next(s.Length)]).ToArray());
         }
     }
 }

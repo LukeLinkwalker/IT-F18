@@ -9,6 +9,6 @@ namespace IT_F18.Models
     public class GalleryViewModel
     {
         public int ID { get; set; }
-        public byte[] Image { get; set; }
+        public string ImagePath { get; set; }
     }
 }
