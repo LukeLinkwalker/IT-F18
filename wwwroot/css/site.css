@@ -40,6 +40,7 @@ main {
     background-color: rgb(89, 135, 180);
 }
 
+
 .navigation {
     display: flex;
     flex-flow: column;
@@ -50,6 +51,12 @@ main {
 
 .navigation li{
     margin:6px 0;
+}
+
+.navigation li:hover{
+     color:#00A0C6; 
+     text-decoration:none; 
+     cursor:pointer;  
 }
 
 
