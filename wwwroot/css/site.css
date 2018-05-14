@@ -30,14 +30,14 @@ header {
     padding: 30px;
     text-align: center;
     font-size: 1.4em;
-    background-color: #369;
+    background-color: #3b3b3b;
     color: white;
 }
 
 main {
     flex: 1;
     padding: 20px;
-    background-color: rgb(89, 135, 180);
+    background-color: #5486af;
 }
 
 
