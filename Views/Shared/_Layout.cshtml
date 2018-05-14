@@ -18,14 +18,12 @@
         <header>
             <p>Header</p>
         </header>
-
-        <nav>
-            <a class="nav-bar" asp-area="" asp-controller="About" asp-action="Index">About</a>
-            <a class="nav-bar" asp-area="" asp-controller="Gallery" asp-action="Index">Gallery</a>
-            <a class="nav-bar" asp-area="" asp-controller="Newsletter" asp-action="Create">Newsletter</a>
-            <a class="nav-bar" asp-area="" asp-controller="Admin" asp-action="Index">Admin</a>
-        </nav>
-
+        <ul class="navigation">
+            <li><a class="navLink" asp-area="" asp-controller="About" asp-action="Index" style="text-decoration:none; color:inherit;">About</a></li>
+            <li><a class="navLink" asp-area="" asp-controller="Gallery" asp-action="Index" style="text-decoration:none; color:inherit;">Gallery</a></li>
+            <li><a class="navLink" asp-area="" asp-controller="Newsletter" asp-action="Create" style="text-decoration:none; color:inherit;">Newsletter</a></li>
+            <li><a class="navLink" asp-area="" asp-controller="Admin" asp-action="Index" style="text-decoration:none; color:inherit;">Admin</a></li>
+        </ul>
         <main>
             @RenderBody()
         </main>
