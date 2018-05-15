@@ -16,13 +16,14 @@
 <body>
     <div class="container">
         <header>
+            <ul class="navigation">
+                <li><a class="navLink" asp-area="" asp-controller="About" asp-action="Index" style="text-decoration:none; color:inherit;">About</a></li>
+                <li><a class="navLink" asp-area="" asp-controller="Gallery" asp-action="Index" style="text-decoration:none; color:inherit;">Gallery</a></li>
+                <li><a class="navLink" asp-area="" asp-controller="Newsletter" asp-action="Create" style="text-decoration:none; color:inherit;">Newsletter</a></li>
+                <li><a class="navLink" asp-area="" asp-controller="Admin" asp-action="Index" style="text-decoration:none; color:inherit;">Admin</a></li>
+            </ul>
         </header>
-        <ul class="navigation">
-            <li><a class="navLink" asp-area="" asp-controller="About" asp-action="Index" style="text-decoration:none; color:inherit;">About</a></li>
-            <li><a class="navLink" asp-area="" asp-controller="Gallery" asp-action="Index" style="text-decoration:none; color:inherit;">Gallery</a></li>
-            <li><a class="navLink" asp-area="" asp-controller="Newsletter" asp-action="Create" style="text-decoration:none; color:inherit;">Newsletter</a></li>
-            <li><a class="navLink" asp-area="" asp-controller="Admin" asp-action="Index" style="text-decoration:none; color:inherit;">Admin</a></li>
-        </ul>
+        
         <main>
             @RenderBody()
         </main>
