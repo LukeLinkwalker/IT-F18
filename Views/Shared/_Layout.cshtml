@@ -17,14 +17,21 @@
     </environment>
 </head>
 <body>
-    <div class="container">
         <header>
-            <ul class="navigation">
-                <li><a class="navLink" asp-area="" asp-controller="About" asp-action="Index" style="text-decoration:none; color:inherit;">About</a></li>
-                <li><a class="navLink" asp-area="" asp-controller="Gallery" asp-action="Index" style="text-decoration:none; color:inherit;">Gallery</a></li>
-                <li><a class="navLink" asp-area="" asp-controller="Newsletter" asp-action="Create" style="text-decoration:none; color:inherit;">Newsletter</a></li>
-                <li><a class="navLink" asp-area="" asp-controller="Admin" asp-action="Index" style="text-decoration:none; color:inherit;">Admin</a></li>
-            </ul>
+            <div class="row">
+                <div class="col-sm-6">
+                    <ul class="navigation">
+                        <li><a class="navLink" asp-area="" asp-controller="About" asp-action="Index" style="text-decoration:none; color:inherit;">About</a></li>
+                        <li><a class="navLink" asp-area="" asp-controller="Gallery" asp-action="Index" style="text-decoration:none; color:inherit;">Gallery</a></li>
+                        <li><a class="navLink" asp-area="" asp-controller="Newsletter" asp-action="Create" style="text-decoration:none; color:inherit;">Newsletter</a></li>
+                        <li><a class="navLink" asp-area="" asp-controller="Admin" asp-action="Index" style="text-decoration:none; color:inherit;">Admin</a></li>
+                    </ul>
+                </div>
+                <div class="col-sm-6">
+                    <img class="float-right" style="max-width: 120px" src="~/images/SDU_logo.png" alt="Sdu logo">
+                </div>
+            </div>
+            
         </header>
         
         <main>
@@ -34,9 +41,7 @@
         <footer>
             <p style="font-size: 14px;">This website is made as a mandatory assignment for the Internet Technology class at sdu.</p>
             <p style="font-size: 18px;">By: Mikkel Bjerg and Jonas Pedersen</p>
-            <img style="max-width: 120px" src="~/images/SDU_logo.png" alt="Sdu logo">
         </footer>
-    </div>
     @RenderSection("Scripts", required: false)
 </body>
 </html>
