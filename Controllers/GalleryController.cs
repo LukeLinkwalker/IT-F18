@@ -9,9 +9,11 @@ using IT_F18.Models;
 using Microsoft.AspNetCore.Http;
 using System.IO;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Authorization;
 
 namespace IT_F18.Controllers
 {
+    [Authorize]
     public class GalleryController : Controller
     {
         private readonly IHostingEnvironment environment;
@@ -29,6 +31,7 @@ namespace IT_F18.Controllers
         }
 
         // GET: Gallery
+        [AllowAnonymous]
         public async Task<IActionResult> Index()
         {
             return View(await context.Gallery.ToListAsync());
