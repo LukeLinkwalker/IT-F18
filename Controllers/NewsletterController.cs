@@ -47,6 +47,7 @@ namespace IT_F18.Controllers
         }
 
         // GET: Newsletter/Create
+        [AllowAnonymous]
         public IActionResult Create()
         {
             return View();
@@ -56,6 +57,7 @@ namespace IT_F18.Controllers
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
+        [AllowAnonymous]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("ID,Firstname,Email")] NewsletterViewModel newsletterViewModel)
         {
