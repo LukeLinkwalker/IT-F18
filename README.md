@@ -1,6 +1,6 @@
 # Mandatory assignment
 
-This repository contains .netcore 2 mvc app for the Internet technology class at sdu.
+This repository contains a .netcore 2 mvc app for the Internet technology class at sdu.
 
 It consists of 4 views main views:
 * About me(us) page that has a headline and some text.
