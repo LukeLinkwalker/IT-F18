@@ -7,9 +7,11 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using IT_F18.Models;
 using System.Diagnostics;
+using Microsoft.AspNetCore.Authorization;
 
 namespace IT_F18.Controllers
 {
+    [Authorize]
     public class AboutController : Controller
     {
         private readonly DatabaseContext _context;
@@ -20,6 +22,7 @@ namespace IT_F18.Controllers
         }
 
         // GET: About
+        [AllowAnonymous]
         public IActionResult Index()
         {
             var text = _context.About.ToList();

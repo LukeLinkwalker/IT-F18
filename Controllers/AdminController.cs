@@ -6,9 +6,14 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using IT_F18.Models;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authentication;
 
 namespace IT_F18.Controllers
 {
+    [Authorize]
     public class AdminController : Controller
     {
         private readonly DatabaseContext _context;
@@ -17,136 +22,157 @@ namespace IT_F18.Controllers
         {
             _context = context;
         }
-
-        // GET: Admin
+        
         public async Task<IActionResult> Index()
         {
             return View(await _context.Admin.ToListAsync());
         }
 
-        // GET: Admin/Details/5
-        public async Task<IActionResult> Details(int? id)
+        [AllowAnonymous]
+        public async Task<IActionResult> Login()
         {
-            if (id == null)
+            if(!AdminAccountExists())
             {
-                return NotFound();
+                return RedirectToAction("Register");
             }
 
-            var adminViewModel = await _context.Admin
-                .SingleOrDefaultAsync(m => m.ID == id);
-            if (adminViewModel == null)
-            {
-                return NotFound();
-            }
-
-            return View(adminViewModel);
-        }
-
-        // GET: Admin/Create
-        public IActionResult Create()
-        {
             return View();
         }
 
-        // POST: Admin/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
+        [AllowAnonymous]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ID,Username,Password")] AdminViewModel adminViewModel)
+        public async Task<IActionResult> Login([Bind("ID, Username, Password")] AdminViewModel admin)
         {
+            if (!AdminAccountExists())
+            {
+                return RedirectToAction("Register");
+            }
+
+            if (ValidateCredentials(admin.Username, admin.Password))
+            {
+                var claims = new List<Claim>
+                {
+                    new Claim(ClaimTypes.Name, admin.Username)
+                };
+
+                var identity = new ClaimsIdentity(claims, "login");
+
+                ClaimsPrincipal principal = new ClaimsPrincipal(identity);
+                await HttpContext.SignInAsync(principal);
+
+                return RedirectToAction("Index");
+            }
+
+            return View();
+        }
+        
+        [AllowAnonymous]
+        public IActionResult Register()
+        {
+            if(AdminAccountExists())
+            {
+                return RedirectToAction("Login");
+            }
+
+            return View();
+        }
+        
+        [HttpPost]
+        [AllowAnonymous]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Register([Bind("ID,Username,Password,ConfirmPassword")] AdminViewModel adminViewModel)
+        {
+            if(AdminAccountExists())
+            {
+                return RedirectToAction("Login");
+            }
+
+            if(adminViewModel.Username == string.Empty)
+            {
+                return View();
+            }
+
+            if(adminViewModel.Password != adminViewModel.ConfirmPassword)
+            {
+                return View();
+            }
+
             if (ModelState.IsValid)
             {
+                adminViewModel.Username = adminViewModel.Username.ToLower();
+                adminViewModel.ConfirmPassword = string.Empty;
+                adminViewModel.Password = new PasswordHasher<AdminViewModel>().HashPassword(adminViewModel, adminViewModel.Password);
                 _context.Add(adminViewModel);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
             }
-            return View(adminViewModel);
-        }
 
-        // GET: Admin/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+            return RedirectToAction("Login");
+        }
+        
+        public async Task<IActionResult> Edit()
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var adminViewModel = await _context.Admin.SingleOrDefaultAsync(m => m.ID == id);
-            if (adminViewModel == null)
-            {
-                return NotFound();
-            }
+            var adminViewModel = _context.Admin.ToList().ElementAt(0);
+            adminViewModel.Password = string.Empty;
             return View(adminViewModel);
         }
-
-        // POST: Admin/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ID,Username,Password")] AdminViewModel adminViewModel)
+        public async Task<IActionResult> Edit([Bind("ID,Username,Password, ConfirmPassword")] AdminViewModel adminViewModel)
         {
-            if (id != adminViewModel.ID)
-            {
-                return NotFound();
-            }
-
             if (ModelState.IsValid)
             {
                 try
                 {
-                    _context.Update(adminViewModel);
+                    adminViewModel.Username = _context.Admin.ToList().ElementAt(0).Username;
+                    adminViewModel.ConfirmPassword = string.Empty;
+                    //adminViewModel.Password = new PasswordHasher<AdminViewModel>().HashPassword(adminViewModel, adminViewModel.Password);
+                    //adminViewModel.ID = _context.Admin.ToList().ElementAt(0).ID;
+
+                    //_context.Update(adminViewModel);
+                    //await _context.SaveChangesAsync();
+                    //
+                    //AdminViewModel admin = _context.Admin.ToList().ElementAt(0);
+                    //admin.Password = new PasswordHasher<AdminViewModel>().HashPassword(adminViewModel, adminViewModel.Password);
+
+                    var entry = _context.Admin.SingleOrDefault(m => m.Username == adminViewModel.Username);
+                    entry.Password = new PasswordHasher<AdminViewModel>().HashPassword(adminViewModel, adminViewModel.Password);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!AdminViewModelExists(adminViewModel.ID))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
+                    throw;
                 }
-                return RedirectToAction(nameof(Index));
+
+                return RedirectToAction("Index");
             }
-            return View(adminViewModel);
+
+            return View();
         }
 
-        // GET: Admin/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+        private bool ValidateCredentials(string username, string password)
         {
-            if (id == null)
+            AdminViewModel admin = _context.Admin.ToList().ElementAt(0);
+            admin.ConfirmPassword = string.Empty;
+
+            if (admin.Username.ToLower() == username.ToLower() &&
+               PasswordVerificationResult.Success == new PasswordHasher<AdminViewModel>().VerifyHashedPassword(admin, admin.Password, password))
             {
-                return NotFound();
+                return true;
             }
 
-            var adminViewModel = await _context.Admin
-                .SingleOrDefaultAsync(m => m.ID == id);
-            if (adminViewModel == null)
+            return false;
+        }
+
+        private bool AdminAccountExists()
+        {
+            if(_context.Admin.ToList().Count == 0)
             {
-                return NotFound();
-            }
+                return false;
+            } 
 
-            return View(adminViewModel);
-        }
-
-        // POST: Admin/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
-        {
-            var adminViewModel = await _context.Admin.SingleOrDefaultAsync(m => m.ID == id);
-            _context.Admin.Remove(adminViewModel);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
-        }
-
-        private bool AdminViewModelExists(int id)
-        {
-            return _context.Admin.Any(e => e.ID == id);
+            return true;
         }
     }
 }

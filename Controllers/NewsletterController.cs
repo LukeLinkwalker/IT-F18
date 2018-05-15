@@ -6,9 +6,11 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using IT_F18.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace IT_F18.Controllers
 {
+    [Authorize]
     public class NewsletterController : Controller
     {
         private readonly DatabaseContext _context;
@@ -19,6 +21,7 @@ namespace IT_F18.Controllers
         }
 
         // GET: Newsletter
+        [AllowAnonymous]
         public IActionResult Index()
         {
             
