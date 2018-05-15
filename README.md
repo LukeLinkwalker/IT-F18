@@ -1,6 +1,6 @@
 # Mandatory assignment
 
-This repository contains .netcore 2 mvc app for the Internet technology class at sdu.
+This repository contains a .netcore 2 mvc app for the Internet technology class at sdu.
 
 It consists of 4 views main views:
 * About me(us) page that has a headline and some text.
@@ -17,3 +17,5 @@ To setup this web app:
 
 Additional setup:
 The first time you try to access the admin page you will be prompted to create an admin user;
+
+## Made by Mikkel Bjerg and Jonas Pedersen
