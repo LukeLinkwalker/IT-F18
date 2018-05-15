@@ -127,14 +127,6 @@ namespace IT_F18.Controllers
                 {
                     adminViewModel.Username = _context.Admin.ToList().ElementAt(0).Username;
                     adminViewModel.ConfirmPassword = string.Empty;
-                    //adminViewModel.Password = new PasswordHasher<AdminViewModel>().HashPassword(adminViewModel, adminViewModel.Password);
-                    //adminViewModel.ID = _context.Admin.ToList().ElementAt(0).ID;
-
-                    //_context.Update(adminViewModel);
-                    //await _context.SaveChangesAsync();
-                    //
-                    //AdminViewModel admin = _context.Admin.ToList().ElementAt(0);
-                    //admin.Password = new PasswordHasher<AdminViewModel>().HashPassword(adminViewModel, adminViewModel.Password);
 
                     var entry = _context.Admin.SingleOrDefault(m => m.Username == adminViewModel.Username);
                     entry.Password = new PasswordHasher<AdminViewModel>().HashPassword(adminViewModel, adminViewModel.Password);
@@ -149,6 +141,12 @@ namespace IT_F18.Controllers
             }
 
             return View();
+        }
+
+        public async Task<IActionResult> Logout()
+        {
+            await HttpContext.SignOutAsync();
+            return RedirectToAction("Index");
         }
 
         private bool ValidateCredentials(string username, string password)
