@@ -17,3 +17,5 @@ To setup this web app:
 
 Additional setup:
 The first time you try to access the admin page you will be prompted to create an admin user;
+
+## Made by Mikkel Bjerg and Jonas Pedersen
