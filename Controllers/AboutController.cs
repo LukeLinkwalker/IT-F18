@@ -31,24 +31,6 @@ namespace IT_F18.Controllers
 
         }
 
-        // GET: About/Details/5
-        public async Task<IActionResult> Details(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var aboutViewModel = await _context.About
-                .SingleOrDefaultAsync(m => m.ID == id);
-            if (aboutViewModel == null)
-            {
-                return NotFound();
-            }
-
-            return View(aboutViewModel);
-        }
-
         // GET: About/Create
         public IActionResult Create()
         {
@@ -69,96 +51,6 @@ namespace IT_F18.Controllers
                 return RedirectToAction(nameof(Index));
             }
             return View(aboutViewModel);
-        }
-
-        // GET: About/Edit/5
-        public async Task<IActionResult> Edit(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var aboutViewModel = await _context.About.SingleOrDefaultAsync(m => m.ID == id);
-            if (aboutViewModel == null)
-            {
-                return NotFound();
-            }
-            return View(aboutViewModel);
-        }
-
-        // POST: About/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ID,Plaintext")] AboutViewModel aboutViewModel)
-        {
-            if (id != aboutViewModel.ID)
-            {
-                return NotFound();
-            }
-
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    _context.Update(aboutViewModel);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!AboutViewModelExists(aboutViewModel.ID))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
-            }
-            return View(aboutViewModel);
-        }
-
-        // GET: About/Delete/5
-        public async Task<IActionResult> Delete(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var aboutViewModel = await _context.About
-                .SingleOrDefaultAsync(m => m.ID == id);
-            if (aboutViewModel == null)
-            {
-                return NotFound();
-            }
-
-            return View(aboutViewModel);
-        }
-
-        // POST: About/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
-        {
-            var aboutViewModel = await _context.About.SingleOrDefaultAsync(m => m.ID == id);
-            _context.About.Remove(aboutViewModel);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
-        }
-
-        private bool AboutViewModelExists(int id)
-        {
-            return _context.About.Any(e => e.ID == id);
-        }
-
-        public IActionResult Error()
-        {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
     }
 }
